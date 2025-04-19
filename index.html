@@ -100,8 +100,7 @@
 	let userRepo = 'grok4/x' // user/repo containing /results folder in default branch
 	let id = location.href.split('?')[1]
 	if (id) {
-		let path = '/results/' + id[0] + '/' + (id.length > 1 ? id[1] : '0') + '/' + id
-		$.get('https://raw.githubusercontent.com/' + userRepo + '/HEAD' + path)
+		$.get('https://raw.githubusercontent.com/' + userRepo + '/HEAD/results/' + id[0] + '/' + (id.length > 1 ? id[1] : '0') + '/' + id)
 			.done(r => {
 				if (!r) return
 				const bs = atob(r); // https://tinyurl.com/atob5
