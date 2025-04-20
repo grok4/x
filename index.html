@@ -9,7 +9,7 @@
 	<style>
         body {
             margin: 0;
-			padding: 8vh 0 8vh 0;
+            padding: 8vh 0 8vh 0;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -18,9 +18,10 @@
             font-family: sans-serif;
             font-size: 16px;
         }
+
         @media only screen and (max-width: 768px), only screen and (max-height: 768px) {
-			body {
-				padding:10px 0 10px 0;
+            body {
+                padding: 10px 0 10px 0;
             }
         }
 
@@ -28,7 +29,7 @@
             display: none;
         }
 
-        #h_wrap, #r {
+        .h_wrap, .r {
             max-width: 736px;
             padding: 20px;
             background-color: #202020;
@@ -39,7 +40,7 @@
             line-height: 24px;
         }
 
-        #h_wrap {
+        .h_wrap {
             display: flex;
             flex-direction: row;
             align-items: center;
@@ -47,12 +48,12 @@
             margin-bottom: 10px;
         }
 
-        #h_logo {
+        .h_logo {
             padding-right: 20px;
             font-size: 12px;
         }
 
-        #h {
+        .h {
             padding: 20px;
             background-color: #101010;
             color: #AAA;
@@ -61,10 +62,33 @@
             font-size: 16px;
         }
 
+        /*.hwrap_2 {*/
+        /*	display: flex;*/
+        /*	width:776px;*/
+        /*    flex-direction: row-reverse;*/
+        /*    white-space: normal;*/
+        /*    margin-bottom: 10px;*/
+        /*}*/
+        /*.h2 {*/
+        /*    max-width: 736px;*/
+        /*    padding: 20px;*/
+        /*    color: #AAA;*/
+        /*    border: 2px solid #202020;*/
+        /*    border-radius: 8px;*/
+        /*    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);*/
+        /*    font-size: 16px;*/
+        /*}*/
+
         #note {
             font-size: 12px;
             color: #777;
             text-align: center;
+            display: none;
+        }
+
+        #show_hist {
+            color: #aaa;
+            cursor: pointer;
         }
 
         .code {
@@ -77,8 +101,8 @@
 </head>
 <body>
 <div id="main">
-	<div id="h_wrap">
-		<div id="h_logo">
+	<div class="h_wrap">
+		<div class="h_logo">
 			<div>you asked</div>
 			<div>
 				<svg width="88" height="33" viewBox="0 0 88 33" fill="none" xmlns="http://www.w3.org/2000/svg" class="opacity-80 hover:opacity-100 fill-black dark:fill-white [&amp;>path]:hidden sm:[&amp;>path]:block [&amp;>#mark]:block [&amp;>#furigana]:opacity-60 [&amp;>#subtitle]:opacity-60">
@@ -91,14 +115,16 @@
 				</svg>
 			</div>
 		</div>
-		<div id="h"></div>
+		<div id="cur_h" class="h"></div>
 	</div>
-	<div id="r"></div>
-	<div id="note">Results may vary based on chat history</div>
+	<div id="cur_r" class="r"></div>
+	<div id="note">Results may vary based on <span id="show_hist">chat history</span></div>
 </div>
 <script>
 	let userRepo = 'grok4/x' // user/repo containing /results folder in default branch
 	let id = location.href.split('?')[1]
+	let results
+	let histLoaded = false
 	if (id) {
 		$.get('https://raw.githubusercontent.com/' + userRepo + '/HEAD/results/' + id[0] + '/' + (id.length > 1 ? id[1] : '0') + '/' + id)
 			.done(r => {
@@ -109,53 +135,47 @@
 				r = new TextDecoder().decode(b);
 
 				try { // new json format; work-in-progress
-					let j = JSON.parse(r) /*
-					{
-						"messages":
+					results = JSON.parse(r) /*
 						[
-							{
-								"role": "user",
-								"content":
-								{
-										"type": "text",
-										"text": "question"
-								},
-							},
-							{
-								"role": "assistant",
-								"content":
-								{
-										"type": "text",
-										"text": "answer"
-								},
-							}
-						]
-					}*/
-					let q = j.messages[j.messages.length-2] // last msg pair, TODO: include full chat history
-					let a = j.messages[j.messages.length-1]
-					document.title = q.text
-					$('#h').text(q.text)
+							["u","t","question"], // user, type (text only atm), text
+							["a","t","answer"],
+						]*/
+					let q = results[results.length - 2][2] // last msg pair
+					let a = results[results.length - 1][2]
+					document.title = q
+					$('#cur_h').text(q)
 
-					a.text = a.text.replaceAll('<', '&lt;')
-					a.text = a.text.replace(/^```(.*)?```\n?$/gms, '<div class="code">```$1```</div>')
-					a.text = a.text.replace(/^&lt;html>(.*)?&lt;\/html>\n?$/gms, '<div class="code">&lt;html>$1&lt;/html></div>')
-					$('#r').html(a.text)
+					a = a.replaceAll('<', '&lt;')
+					a = a.replace(/^```(.*)?```\n?$/gms, '<div class="code">```$1```</div>')
+					a = a.replace(/^&lt;html>(.*)?&lt;\/html>\n?$/gms, '<div class="code">&lt;html>$1&lt;/html></div>')
+					$('#cur_r').html(a)
+
+					if (location.hash === '#history') loadHistory(1);
+
+					if (results.length > 2) {
+						$("#note").show()
+						$("#show_hist").click(() => {
+							if (!histLoaded) loadHistory();
+							else $("body")[0].scrollIntoView({behavior: 'smooth'})
+						})
+					}
 					$('#main').show()
 					return
-				} catch(e) {}
+				} catch (e) {
+				}
 
-				// old format, remove soon
+				// old format, encode past results into json and remove
 				let tmp = r.split('\n\n')
 				let h = tmp[0].replace(/^>> /, '')
 				document.title = h
-				$('#h').text(h)
+				$('#cur_h').text(h)
 				tmp.shift()
 
 				r = tmp.join('\n\n')
 				r = r.replaceAll('<', '&lt;')
 				r = r.replace(/^```(.*)?```\n?$/gms, '<div class="code">```$1```</div>')
 				r = r.replace(/^&lt;html>(.*)?&lt;\/html>\n?$/gms, '<div class="code">&lt;html>$1&lt;/html></div>')
-				$('#r').html(r)
+				$('#cur_r').html(r)
 				$('#main').show()
 			})
 			.fail(() => {
@@ -165,6 +185,22 @@
 	} else {
 		$('body').text('Hmm, there\'s nothing here...')
 		$('#main').show()
+	}
+
+	function loadHistory() {
+		let old_height = $(document).height(); // https://stackoverflow.com/a/21494434
+		let old_scroll = $(window).scrollTop();
+		for (let i = results.length - 1; i >= 0; i--) {
+			if (i >= results.length - 2) continue;
+			if (results[i][0] === 'u') {
+				$('#main').prepend('<div class="h_wrap"><div class="h">' + results[i][2] + '</div></div>')
+			} else {
+				$('#main').prepend('<div class="r">' + results[i][2] + '</div>')
+			}
+		}
+		$(document).scrollTop(old_scroll + $(document).height() - old_height);
+		$("body")[0].scrollIntoView({behavior: 'smooth'})
+		histLoaded = true
 	}
 </script>
 </body>
