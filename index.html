@@ -79,14 +79,19 @@
         /*    font-size: 16px;*/
         /*}*/
 
-        #note {
+        .note {
             font-size: 12px;
             color: #777;
             text-align: center;
             display: none;
         }
 
-        #show_hist {
+        #head_note {
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        #show_hist, #go_main {
             color: #aaa;
             cursor: pointer;
         }
@@ -118,7 +123,7 @@
 		<div id="cur_h" class="h"></div>
 	</div>
 	<div id="cur_r" class="r"></div>
-	<div id="note">Results may vary based on <span id="show_hist">chat history</span></div>
+	<div id="foot_note" class="note">Results may vary based on <span id="show_hist">chat history▴</span></div>
 </div>
 <script>
 	let userRepo = 'grok4/x' // user/repo containing /results folder in default branch
@@ -153,7 +158,7 @@
 					if (location.hash === '#history') loadHistory(1);
 
 					if (results.length > 2) {
-						$("#note").show()
+						$("#foot_note").show()
 						$("#show_hist").click(() => {
 							if (!histLoaded) loadHistory();
 							else $("body")[0].scrollIntoView({behavior: 'smooth'})
@@ -198,6 +203,11 @@
 				$('#main').prepend('<div class="r">' + results[i][2] + '</div>')
 			}
 		}
+		let n = (results.length - 2) / 2
+		$('#main').prepend('<div id="head_note" class="note">Viewing chat history (' + n + ' item' + (n > 2 ? 's' : '') + '). <span id="go_main">Go to current▾</span></div>')
+		$("#go_main").click(() => {
+			$("#cur_h")[0].scrollIntoView({behavior: 'smooth'})
+		})
 		$(document).scrollTop(old_scroll + $(document).height() - old_height);
 		$("body")[0].scrollIntoView({behavior: 'smooth'})
 		histLoaded = true
