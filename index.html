@@ -152,10 +152,9 @@
 					a = a.replace(/^&lt;html>(.*)?&lt;\/html>\n?$/gms, '<div class="code">&lt;html>$1&lt;/html></div>')
 					$('#cur_r').html(a)
 
-					if (location.hash === '#history') loadHistory(1);
-
 					nHist = (results.length - 2) / 2
-					if (nHist > 1) {
+					if (location.hash === '#history') loadHistory(1);
+					if (results.length > 2) {
 						$('#main').append('<div id="foot_note" class="note">Results may vary based on <span id="show_hist">chat history▴</span></div>')
 						$("#show_hist").click(() => {
 							if (!histLoaded) loadHistory();
@@ -201,7 +200,7 @@
 				$('#main').prepend('<div class="r">' + results[i][2] + '</div>')
 			}
 		}
-		
+
 		$('#main').prepend('<div id="head_note" class="note">Viewing chat history (' + nHist + ' item' + (nHist > 1 ? 's' : '') + '). <span id="go_main">Go to current▾</span></div>')
 		$("#go_main").click(() => {
 			$("#cur_h")[0].scrollIntoView({behavior: 'smooth'})
