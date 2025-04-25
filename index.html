@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!--suppress JSJQueryEfficiency -->
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
@@ -62,23 +63,6 @@
             font-size: 16px;
         }
 
-        /*.hwrap_2 {*/
-        /*	display: flex;*/
-        /*	width:776px;*/
-        /*    flex-direction: row-reverse;*/
-        /*    white-space: normal;*/
-        /*    margin-bottom: 10px;*/
-        /*}*/
-        /*.h2 {*/
-        /*    max-width: 736px;*/
-        /*    padding: 20px;*/
-        /*    color: #AAA;*/
-        /*    border: 2px solid #202020;*/
-        /*    border-radius: 8px;*/
-        /*    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);*/
-        /*    font-size: 16px;*/
-        /*}*/
-
         .note {
             font-size: 12px;
             color: #777;
@@ -136,8 +120,8 @@
 				for (let i = 0; i < bs.length; i++) b[i] = bs.charCodeAt(i);
 				r = new TextDecoder().decode(b);
 
-				try { // new json format; work-in-progress
-					results = JSON.parse(r) /*
+				try {
+					results = JSON.parse(r)/*
 						[
 							["u","t","question"], // user, type (text only atm), text
 							["a","t","answer"],
@@ -166,7 +150,7 @@
 				} catch (e) {
 				}
 
-				// old format, encode past results into json and remove
+				// old non-json format, convert past results to json and remove
 				let tmp = r.split('\n\n')
 				let h = tmp[0].replace(/^>> /, '')
 				document.title = h
