@@ -146,23 +146,11 @@
 						})
 					}
 					$('#main').show()
-					return
 				} catch (e) {
+					$('body').text('Error: Not JSON')
+					console.log('r:', r)
+					$('#main').show()
 				}
-
-				// old non-json format, convert past results to json and remove
-				let tmp = r.split('\n\n')
-				let h = tmp[0].replace(/^>> /, '')
-				document.title = h
-				$('#cur_h').text(h)
-				tmp.shift()
-
-				r = tmp.join('\n\n')
-				r = r.replaceAll('<', '&lt;')
-				r = r.replace(/^```(.*)?```\n?$/gms, '<div class="code">```$1```</div>')
-				r = r.replace(/^&lt;html>(.*)?&lt;\/html>\n?$/gms, '<div class="code">&lt;html>$1&lt;/html></div>')
-				$('#cur_r').html(r)
-				$('#main').show()
 			})
 			.fail(() => {
 				$('body').text('Response not found')
