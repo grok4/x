@@ -145,12 +145,11 @@
 							else $("body")[0].scrollIntoView({behavior: 'smooth'})
 						})
 					}
-					$('#main').show()
 				} catch (e) {
 					$('body').text('Error: Not JSON')
 					console.log('r:', r)
-					$('#main').show()
 				}
+				$('#main').show()
 			})
 			.fail(() => {
 				$('body').text('Response not found')
