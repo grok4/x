@@ -41,7 +41,7 @@
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
-			white-space:pre-wrap;
+			/*white-space:pre-wrap;*/
             line-height: 24px;
         }
 
@@ -50,7 +50,7 @@
             flex-direction: row;
             align-items: center;
             margin-bottom: 10px;
-			white-space:normal;
+			/*white-space:normal;*/
         }
 
         .h_logo {
@@ -76,6 +76,15 @@
 		.r > :last-child {
 			margin-bottom:0;
         }
+		.r h1 {
+			font-size:26px
+		}
+		.r h2 {
+			font-size:22px;
+		}
+		.r h3 {
+			font-size: 18px;
+		}
 
         .note {
             font-size: 12px;
@@ -99,19 +108,13 @@
 	<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.5/dist/purify.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js"></script>
 	<script>
-		// Configure Marked with highlight.js and custom renderer
-		marked.setOptions({
-			highlight: function(code, lang) {
-				// Use highlight.js to highlight code
-				return hljs.highlight(code, { language: lang || 'plaintext' }).value;
-			},
-			langPrefix: 'hljs language-', // Ensure highlight.js classes
-			gfm: true, // Enable GitHub Flavored Markdown
-			breaks: true, // Enable line breaks
-			newline: false,
-		});
-		const md = markdownit('commonmark')
+		const md = markdownit({
+			html:true,
+			breaks:true
+		})
+			.disable('code')
 	</script>
+
 </head>
 <body>
 <div id="main">
@@ -140,10 +143,10 @@
 	let histLoaded = false
 
 	function formatHTML(a) {
-		console.log('pre render:', a)
-		// return DOMPurify.sanitize(marked.parse(a))
-		return DOMPurify.sanitize(a)
-		// return DOMPurify.sanitize(md.render(a))
+		// console.log('pre render:', a)
+		// return DOMPurify.sanitize(a)
+		// a = a.replace(/^\s+/gm, function(m){ return m.replace(/\s/g, '\u00A0');}); // keep leading spaces
+		return DOMPurify.sanitize(md.render(a))
 	}
 
 	if (id) {
@@ -170,7 +173,7 @@
 					// 	console.log('el', el)
 					// 	hljs.highlightElement(el);
 					// });
-					// hljs.highlightAll();
+					hljs.highlightAll();
 
 					nHist = (results.length - 2) / 2
 					if (location.hash === '#history') loadHistory(1);
@@ -204,10 +207,10 @@
 			if (results[i][0] === 'u') $('#main').prepend('<div class="h_wrap"><div class="h" id="r'+i+'"></div></div>')
 			else $('#main').prepend('<div class="r" id="r'+i+'"></div>')
 			$('#r'+i).html(formatHTML(results[i][2]))
-			document.querySelectorAll('pre code').forEach((el) => {
-				hljs.highlightElement(el);
-			});
-			// hljs.highlightAll();
+			// document.querySelectorAll('pre code').forEach((el) => {
+			// 	hljs.highlightElement(el);
+			// });
+			hljs.highlightAll();
 
 		}
 
