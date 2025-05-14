@@ -109,7 +109,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js"></script>
 	<script>
 		const md = markdownit({
-			html:true,
+			html:false,
 			breaks:true
 		})
 			.disable('code')
@@ -144,8 +144,8 @@
 
 	function formatHTML(a) {
 		// console.log('pre render:', a)
-		// return DOMPurify.sanitize(a)
 		// a = a.replace(/^\s+/gm, function(m){ return m.replace(/\s/g, '\u00A0');}); // keep leading spaces
+		// return DOMPurify.sanitize(a)
 		return DOMPurify.sanitize(md.render(a))
 	}
 
