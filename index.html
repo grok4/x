@@ -98,7 +98,6 @@
 	<script>
 		// Configure Marked with highlight.js and custom renderer
 		marked.setOptions({
-			sanitize: true,
 			highlight: function(code, lang) {
 				// Use highlight.js to highlight code
 				return hljs.highlight(code, { language: lang || 'plaintext' }).value;
