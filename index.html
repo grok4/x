@@ -95,16 +95,18 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/atom-one-dark.min.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/highlight.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/languages/javascript.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.5/dist/purify.min.js"></script>
 	<script>
-		// Configure Marked with highlight.js
+		// Configure Marked with highlight.js and custom renderer
 		marked.setOptions({
+			sanitize: true,
 			highlight: function(code, lang) {
-				// Use highlight.js to highlight the code
+				// Use highlight.js to highlight code
 				return hljs.highlight(code, { language: lang || 'plaintext' }).value;
 			},
-			langPrefix: 'hljs language-', // Ensure highlight.js classes are applied
+			langPrefix: 'hljs language-', // Ensure highlight.js classes
 			gfm: true, // Enable GitHub Flavored Markdown
-			breaks: true // Enable line breaks
+			breaks: true, // Enable line breaks
 		});
 	</script>
 </head>
@@ -135,11 +137,7 @@
 	let histLoaded = false
 
 	function formatHTML(a) {
-		// a = a.replaceAll('<', '&lt;')
-		// a = a.replace(/^```(.*)?```\n?$/gms, '<div class="code">```$1```</div>')
-		// a = a.replace(/^&lt;html>(.*)?&lt;\/html>\n?$/gms, '<div class="code">&lt;html>$1&lt;/html></div>')
-		a = marked.parse(a)
-		return a
+		return DOMPurify.sanitize(marked.parse(a))
 	}
 
 	if (id) {
@@ -174,7 +172,7 @@
 						})
 					}
 				} catch (e) {
-					$('body').text('Error: Not JSON')
+					$('body').text('Error: ' + e.message)
 					console.log('r:', r)
 				}
 				$('#main').show()
