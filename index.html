@@ -169,10 +169,6 @@
 					document.title = q
 					$('#cur_h').html(formatHTML(q))
 					$('#cur_r').html(formatHTML(a))
-					// document.querySelectorAll('pre code').forEach((el) => {
-					// 	console.log('el', el)
-					// 	hljs.highlightElement(el);
-					// });
 					hljs.highlightAll();
 
 					nHist = (results.length - 2) / 2
@@ -207,11 +203,7 @@
 			if (results[i][0] === 'u') $('#main').prepend('<div class="h_wrap"><div class="h" id="r'+i+'"></div></div>')
 			else $('#main').prepend('<div class="r" id="r'+i+'"></div>')
 			$('#r'+i).html(formatHTML(results[i][2]))
-			// document.querySelectorAll('pre code').forEach((el) => {
-			// 	hljs.highlightElement(el);
-			// });
 			hljs.highlightAll();
-
 		}
 
 		$('#main').prepend('<div id="head_note" class="note">Viewing chat history (' + nHist + ' item' + (nHist > 1 ? 's' : '') + '). <span id="go_main">Go to current▾</span></div>')
