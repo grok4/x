@@ -70,10 +70,10 @@
 		.h_wrap p {
 			margin:0;
 		}
-		.r > :first-child {
+		.r > :first-child { /* first <p> */
 			margin-top:0;
         }
-		.r > :last-child, .r > :last-child li:last-child :last-child {
+		.r > :last-child, .r > :last-child li:last-child :last-child { /* last <p> even if in <li> */
 			margin-bottom:0;
         }
 		.r h1 {
@@ -102,19 +102,16 @@
         }
 	</style>
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<!--	<script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.min.js"></script>-->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/atom-one-dark.min.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/highlight.min.js"></script><!-- ~40 languages https://tinyurl.com/mrdhwd3p -->
 	<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.5/dist/purify.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js"></script>
 	<script>
 		const md = markdownit({
-			html:false,
-			breaks:true
-		})
-			.disable('code')
+			html:false, /* escape non-code html */
+			breaks:true /* \n to <br> */
+		}).disable('code') /* only ```fence``` and `inline` */
 	</script>
-
 </head>
 <body>
 <div id="main">
